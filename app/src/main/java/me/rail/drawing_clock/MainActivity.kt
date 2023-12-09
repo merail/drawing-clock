@@ -11,6 +11,11 @@ import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -19,6 +24,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 import me.rail.drawing_clock.ui.theme.DrawingClockTheme
 import java.util.Timer
 import java.util.TimerTask
@@ -53,6 +59,10 @@ fun Main() {
 
 @Composable
 fun ClockCircle(boxWithConstrainsScope: BoxWithConstraintsScope) {
+    var currentHour by remember { mutableStateOf(3) }
+    var currentMinute by remember { mutableStateOf(7) }
+    var currentSecond by remember { mutableStateOf(10) }
+
     Canvas(
         modifier = Modifier,
     ) {
@@ -85,15 +95,53 @@ fun ClockCircle(boxWithConstrainsScope: BoxWithConstraintsScope) {
                 radius = radius,
             )
 
-            drawHourHand(
+            drawHand(
                 drawScope = this@Canvas,
                 center = center,
+                step = 30,
+                length = 100,
+                width = 3.dp.toPx(),
+                currentValue = currentHour,
             )
 
-            drawMinuteHand(
+            drawHand(
                 drawScope = this@Canvas,
                 center = center,
+                step = 6,
+                length = 180,
+                width = 3.dp.toPx(),
+                currentValue = currentMinute,
             )
+
+            drawHand(
+                drawScope = this@Canvas,
+                center = center,
+                step = 6,
+                length = 260,
+                width = 3.dp.toPx(),
+                currentValue = currentSecond,
+            )
+        }
+    }
+
+    LaunchedEffect(currentHour) {
+        while (true) {
+            delay(3_600_000)
+            currentHour = (currentHour + 1) % 12
+        }
+    }
+
+    LaunchedEffect(currentMinute) {
+        while (true) {
+            delay(60_000)
+            currentMinute = (currentMinute + 1) % 60
+        }
+    }
+
+    LaunchedEffect(currentSecond) {
+        while (true) {
+            delay(1_000)
+            currentSecond = (currentSecond + 1) % 60
         }
     }
 }
@@ -127,37 +175,24 @@ fun drawMinuteLines(
     }
 }
 
-fun drawHourHand(
+fun drawHand(
     drawScope: DrawScope,
     center: Offset,
+    step: Int,
+    length: Int,
+    width: Float,
+    currentValue: Int,
 ) = with(drawScope) {
-    val hour = (((22 * 30) - 90F) * (PI / 180))
+    val secondsAngle= (((currentValue * step) - 90F) * (PI / 180))
     val startX = center.x
     val startY = center.y
-    val endX = center.x + 100 * cos(hour).toFloat()
-    val endY = center.y + 100 * sin(hour).toFloat()
+    val endX = center.x + length * cos(secondsAngle).toFloat()
+    val endY = center.y + length * sin(secondsAngle).toFloat()
     drawLine(
         color = Color(0xFFF454FF),
         start = Offset(startX, startY),
         end = Offset(endX, endY),
-        strokeWidth = 3.dp.toPx()
-    )
-}
-
-fun drawMinuteHand(
-    drawScope: DrawScope,
-    center: Offset,
-) = with(drawScope) {
-    val minutesAngle= (((53 * 6) - 90F) * (PI / 180))
-    val startX = center.x
-    val startY = center.y
-    val endX = center.x + 180 * cos(minutesAngle).toFloat()
-    val endY = center.y + 180 * sin(minutesAngle).toFloat()
-    drawLine(
-        color = Color(0xFFF454FF),
-        start = Offset(startX, startY),
-        end = Offset(endX, endY),
-        strokeWidth = 3.dp.toPx()
+        strokeWidth = width,
     )
 }
 
