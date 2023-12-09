@@ -26,9 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import me.rail.drawing_clock.ui.theme.DrawingClockTheme
-import java.util.Timer
-import java.util.TimerTask
-import kotlin.concurrent.timerTask
+import java.util.Calendar
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -51,17 +49,26 @@ fun Main() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
+        val calendar = Calendar.getInstance()
         ClockCircle(
             boxWithConstrainsScope = this,
+            hour = calendar.get(Calendar.HOUR),
+            minute = calendar.get(Calendar.MINUTE),
+            second = calendar.get(Calendar.SECOND),
         )
     }
 }
 
 @Composable
-fun ClockCircle(boxWithConstrainsScope: BoxWithConstraintsScope) {
-    var currentHour by remember { mutableStateOf(3) }
-    var currentMinute by remember { mutableStateOf(7) }
-    var currentSecond by remember { mutableStateOf(10) }
+fun ClockCircle(
+    boxWithConstrainsScope: BoxWithConstraintsScope,
+    hour: Int,
+    minute: Int,
+    second: Int,
+) {
+    var currentHour by remember { mutableStateOf(hour) }
+    var currentMinute by remember { mutableStateOf(minute) }
+    var currentSecond by remember { mutableStateOf(second) }
 
     Canvas(
         modifier = Modifier,
