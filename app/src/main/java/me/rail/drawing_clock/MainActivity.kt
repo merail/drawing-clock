@@ -21,7 +21,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextMeasurer
@@ -55,7 +54,7 @@ fun Main() {
         modifier = Modifier
             .fillMaxSize()
             .background(
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.background,
             ),
     ) {
         val calendar = Calendar.getInstance()
@@ -89,26 +88,20 @@ fun ClockCircle(
             y = boxWithConstrainsScope.maxHeight.toPx() / 2,
         )
         val radius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3
-        drawContext.canvas.nativeCanvas.drawCircle(
-            center.x,
-            center.y,
-            radius,
-            Paint().apply {
-                strokeWidth = 3.dp.toPx()
-                color = android.graphics.Color.parseColor("#040E25")
-                style = Paint.Style.FILL
-                setShadowLayer(
-                    150f,
-                    0f,
-                    0f,
-                    android.graphics.Color.argb(
-                        90,
-                        255,
-                        255,
-                        255,
-                    ),
-                )
-            }
+
+        drawCircle(
+            color = Color.Black,
+            radius = radius + 10,
+            center = center,
+            style = Stroke(
+                width = 10f,
+            ),
+        )
+
+        drawCircle(
+            color = Color.White,
+            radius = radius,
+            center = center,
         )
 
         drawMinuteLines(
@@ -128,8 +121,9 @@ fun ClockCircle(
             drawScope = this@Canvas,
             center = center,
             step = 30,
-            length = 100,
-            width = 3.dp.toPx(),
+            length = 170,
+            width = 7.dp.toPx(),
+            color = Color.Black,
             currentValue = currentHour,
         )
 
@@ -137,39 +131,48 @@ fun ClockCircle(
             drawScope = this@Canvas,
             center = center,
             step = 6,
-            length = 180,
-            width = 3.dp.toPx(),
+            length = 230,
+            width = 7.dp.toPx(),
+            color = Color.Black,
             currentValue = currentMinute,
+        )
+
+        drawCircle(
+            color = Color.Red,
+            radius = 12f,
+            center = center,
+        )
+
+        drawCircle(
+            color = Color.Black,
+            radius = 17f,
+            center = center,
+            style = Stroke(
+                width = 10f,
+            ),
         )
 
         drawHand(
             drawScope = this@Canvas,
             center = center,
             step = 6,
-            length = 260,
+            length = 240,
             width = 3.dp.toPx(),
+            color = Color.Red,
             currentValue = currentSecond,
         )
-    }
-
-    LaunchedEffect(currentHour) {
-        while (true) {
-            delay(3_600_000)
-            currentHour = (currentHour + 1) % 12
-        }
-    }
-
-    LaunchedEffect(currentMinute) {
-        while (true) {
-            delay(60_000)
-            currentMinute = (currentMinute + 1) % 60
-        }
     }
 
     LaunchedEffect(currentSecond) {
         while (true) {
             delay(1_000)
             currentSecond = (currentSecond + 1) % 60
+            if (currentSecond == 0) {
+                currentMinute = (currentMinute + 1) % 60
+            }
+            if (currentMinute == 0) {
+                currentHour = (currentHour + 1) % 12
+            }
         }
     }
 }
@@ -223,7 +226,7 @@ fun drawHourNumbers(
             text = number,
             size = textSize,
             style = TextStyle(
-                color = Color.Red,
+                color = Color.Black,
             ),
             topLeft = Offset(
                 x = endX.toFloat() - textSize.width / 2,
@@ -239,6 +242,7 @@ fun drawHand(
     step: Int,
     length: Int,
     width: Float,
+    color: Color,
     currentValue: Int,
 ) = with(drawScope) {
     val secondsAngle= (((currentValue * step) - 90F) * (PI / 180))
@@ -247,7 +251,7 @@ fun drawHand(
     val endX = center.x + length * cos(secondsAngle).toFloat()
     val endY = center.y + length * sin(secondsAngle).toFloat()
     drawLine(
-        color = Color(0xFFF454FF),
+        color = color,
         start = Offset(startX, startY),
         end = Offset(endX, endY),
         strokeWidth = width,
