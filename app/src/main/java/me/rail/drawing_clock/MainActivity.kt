@@ -58,11 +58,14 @@ fun Main() {
             ),
     ) {
         val calendar = Calendar.getInstance()
+        val second = calendar.get(Calendar.SECOND).toFloat()
+        val minute = calendar.get(Calendar.MINUTE).toFloat() + second / 60
+        val hour = calendar.get(Calendar.HOUR).toFloat() + minute / 60
         ClockCircle(
             boxWithConstrainsScope = this,
-            hour = calendar.get(Calendar.HOUR),
-            minute = calendar.get(Calendar.MINUTE),
-            second = calendar.get(Calendar.SECOND),
+            hour = hour,
+            minute = minute,
+            second = second,
         )
     }
 }
@@ -71,9 +74,9 @@ fun Main() {
 @Composable
 fun ClockCircle(
     boxWithConstrainsScope: BoxWithConstraintsScope,
-    hour: Int,
-    minute: Int,
-    second: Int,
+    hour: Float,
+    minute: Float,
+    second: Float,
 ) {
     var currentHour by remember { mutableStateOf(hour) }
     var currentMinute by remember { mutableStateOf(minute) }
@@ -166,13 +169,13 @@ fun ClockCircle(
     LaunchedEffect(currentSecond) {
         while (true) {
             delay(1_000)
-            currentSecond = (currentSecond + 1) % 60
-            if (currentSecond == 0) {
-                currentMinute = (currentMinute + 1) % 60
-            }
-            if (currentMinute == 0) {
-                currentHour = (currentHour + 1) % 12
-            }
+            val previousSecond = currentSecond
+            val previousMinute = currentMinute
+            currentSecond += 1
+            currentMinute = (currentMinute + (currentSecond - previousSecond) / 60)
+            currentSecond %= 60
+            currentHour = (currentHour + (currentMinute - previousMinute) / 60) % 12
+            currentMinute %= 60
         }
     }
 }
@@ -243,13 +246,13 @@ fun drawHand(
     length: Int,
     width: Float,
     color: Color,
-    currentValue: Int,
+    currentValue: Float,
 ) = with(drawScope) {
-    val secondsAngle= (((currentValue * step) - 90F) * (PI / 180))
+    val angle= (((currentValue * step) - 90F) * (PI / 180))
     val startX = center.x
     val startY = center.y
-    val endX = center.x + length * cos(secondsAngle).toFloat()
-    val endY = center.y + length * sin(secondsAngle).toFloat()
+    val endX = center.x + length * cos(angle).toFloat()
+    val endY = center.y + length * sin(angle).toFloat()
     drawLine(
         color = color,
         start = Offset(startX, startY),
