@@ -92,45 +92,45 @@ fun ClockCircle(
             y = boxWithConstrainsScope.maxHeight.toPx() / 2,
         )
         val innerRadius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3
-        val outerRadius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3 + 120
+        val outerRadius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3 + 45.71.dp.toPx()
 
         drawCircle(
             color = Color.Black,
-            radius = outerRadius - 70,
+            radius = outerRadius - 26.67.dp.toPx(),
             center = center,
             style = Stroke(
-                width = 70f,
+                width = 26.67.dp.toPx(),
             ),
         )
 
         drawMinuteLines(
-            drawScope = this@Canvas,
+            drawScope = this,
             center = center,
             radius = innerRadius,
         )
 
         drawHourNumbers(
-            drawScope = this@Canvas,
+            drawScope = this,
             center = center,
             radius = innerRadius,
             textMeasurer = textMeasurer,
         )
 
         drawHand(
-            drawScope = this@Canvas,
+            drawScope = this,
             center = center,
             step = 30,
-            length = 170,
+            length = 64.76.dp.toPx(),
             width = 7.dp.toPx(),
             color = Color.Black,
             currentValue = currentHour,
         )
 
         drawHand(
-            drawScope = this@Canvas,
+            drawScope = this,
             center = center,
             step = 6,
-            length = 230,
+            length = 87.62.dp.toPx(),
             width = 7.dp.toPx(),
             color = Color.Black,
             currentValue = currentMinute,
@@ -138,24 +138,24 @@ fun ClockCircle(
 
         drawCircle(
             color = Color.Red,
-            radius = 12f,
+            radius = 4.57.dp.toPx(),
             center = center,
         )
 
         drawCircle(
             color = Color.Black,
-            radius = 17f,
+            radius = 6.48.dp.toPx(),
             center = center,
             style = Stroke(
-                width = 10f,
+                width = 3.81.dp.toPx(),
             ),
         )
 
         drawHand(
-            drawScope = this@Canvas,
+            drawScope = this,
             center = center,
             step = 6,
-            length = 240,
+            length = 91.43.dp.toPx(),
             width = 3.dp.toPx(),
             color = Color.Red,
             currentValue = currentSecond,
@@ -192,10 +192,10 @@ fun drawMinuteLines(
     var strokeWidth: Float
     for (i in 0..360 step 6) {
         if (i % 30 == 0) {
-            lineHeight = 60f
+            lineHeight = 22.86.dp.toPx()
             strokeWidth = 1.dp.toPx()
         } else {
-            lineHeight = 40f
+            lineHeight = 15.24.dp.toPx()
             strokeWidth = Stroke.HairlineWidth
         }
         val angle = i.toFloat() * (PI / 180)
@@ -220,9 +220,9 @@ fun drawHourNumbers(
     textMeasurer: TextMeasurer,
 ) = with(drawScope) {
     for (i in 30..360 step 30) {
-        val angle = (i - 90F) * (PI / 180)
-        val endX = center.x + (radius - 90) * cos(angle)
-        val endY = center.y + (radius - 90) * sin(angle)
+        val angle = (i - 90f) * (PI / 180)
+        val endX = center.x + (radius - 34.29.dp.toPx()) * cos(angle)
+        val endY = center.y + (radius - 34.29.dp.toPx()) * sin(angle)
         val number = (i / 30).toString()
         val textSize = textMeasurer.measure(
             text = AnnotatedString(number),
@@ -246,12 +246,12 @@ fun drawHand(
     drawScope: DrawScope,
     center: Offset,
     step: Int,
-    length: Int,
+    length: Float,
     width: Float,
     color: Color,
     currentValue: Float,
 ) = with(drawScope) {
-    val angle= (((currentValue * step) - 90F) * (PI / 180))
+    val angle= (((currentValue * step) - 90f) * (PI / 180))
     val startX = center.x
     val startY = center.y
     val endX = center.x + length * cos(angle).toFloat()
@@ -286,20 +286,20 @@ fun drawStrapMounts(
 
         drawPath(
             path = Path().apply {
-                val x1 = center.x + startXRadiusCoefficient * (radius - 50) * cos(45 * PI / 180).toFloat()
-                val y1 = center.y + yRadiusCoefficient * (radius - 50) * sin(45 * PI / 180).toFloat()
+                val x1 = center.x + startXRadiusCoefficient * (radius - 19.05.dp.toPx()) * cos(45 * PI / 180).toFloat()
+                val y1 = center.y + yRadiusCoefficient * (radius - 19.05.dp.toPx()) * sin(45 * PI / 180).toFloat()
 
                 val x2 = xCoefficient * maxWidth
                 val y2 = center.y + yRadiusCoefficient * radius
 
                 val x3 = xCoefficient * maxWidth
-                val y3 = center.y + yRadiusCoefficient * (radius + 30f)
+                val y3 = center.y + yRadiusCoefficient * (radius + 11.43.dp.toPx())
 
-                val x4 = xCoefficient * maxWidth + endXCoefficient * 40f
-                val y4 = center.y + yRadiusCoefficient * (radius + 40f)
+                val x4 = xCoefficient * maxWidth + endXCoefficient * 15.24.dp.toPx()
+                val y4 = center.y + yRadiusCoefficient * (radius + 15.24.dp.toPx())
 
-                val x5 = xCoefficient * maxWidth + endXCoefficient * 55f
-                val y5 = center.y + yRadiusCoefficient * (radius - 90f)
+                val x5 = xCoefficient * maxWidth + endXCoefficient * 20.95.dp.toPx()
+                val y5 = center.y + yRadiusCoefficient * (radius - 34.29.dp.toPx())
 
                 moveTo(
                     x = x1,
