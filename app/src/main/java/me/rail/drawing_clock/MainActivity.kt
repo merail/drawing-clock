@@ -1,6 +1,5 @@
 package me.rail.drawing_clock
 
-import android.graphics.Paint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.AnnotatedString
@@ -35,6 +35,7 @@ import me.rail.drawing_clock.ui.theme.DrawingClockTheme
 import java.util.Calendar
 import kotlin.math.PI
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
 
 class MainActivity : ComponentActivity() {
@@ -90,33 +91,28 @@ fun ClockCircle(
             x = boxWithConstrainsScope.maxWidth.toPx() / 2,
             y = boxWithConstrainsScope.maxHeight.toPx() / 2,
         )
-        val radius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3
+        val innerRadius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3
+        val outerRadius = (boxWithConstrainsScope.maxWidth.toPx() / 2) * 2 / 3 + 120
 
         drawCircle(
             color = Color.Black,
-            radius = radius + 10,
+            radius = outerRadius - 70,
             center = center,
             style = Stroke(
-                width = 10f,
+                width = 70f,
             ),
-        )
-
-        drawCircle(
-            color = Color.White,
-            radius = radius,
-            center = center,
         )
 
         drawMinuteLines(
             drawScope = this@Canvas,
             center = center,
-            radius = radius,
+            radius = innerRadius,
         )
 
         drawHourNumbers(
             drawScope = this@Canvas,
             center = center,
-            radius = radius,
+            radius = innerRadius,
             textMeasurer = textMeasurer,
         )
 
@@ -164,6 +160,13 @@ fun ClockCircle(
             color = Color.Red,
             currentValue = currentSecond,
         )
+
+        drawStrapMounts(
+            drawScope = this,
+            maxWidth = boxWithConstrainsScope.maxWidth.toPx(),
+            center = center,
+            radius = outerRadius,
+        )
     }
 
     LaunchedEffect(currentSecond) {
@@ -204,7 +207,7 @@ fun drawMinuteLines(
             color = Color.Gray,
             start = Offset(startX.toFloat(), startY.toFloat()),
             end = Offset(endX.toFloat(), endY.toFloat()),
-            strokeWidth = strokeWidth
+            strokeWidth = strokeWidth,
         )
     }
 }
@@ -259,6 +262,70 @@ fun drawHand(
         end = Offset(endX, endY),
         strokeWidth = width,
     )
+}
+
+fun drawStrapMounts(
+    drawScope: DrawScope,
+    maxWidth: Float,
+    center: Offset,
+    radius: Float,
+) = with(drawScope) {
+    for (i in 1..4) {
+        val startXRadiusCoefficient = (-1f).pow(i)
+        val yRadiusCoefficient = if (i > 2) {
+            1f
+        } else {
+            -1f
+        }
+        val xCoefficient = if (i % 2 == 0) {
+            3f / 4
+        } else {
+            1f / 4
+        }
+        val endXCoefficient = (-1f).pow(i - 1)
+
+        drawPath(
+            path = Path().apply {
+                val x1 = center.x + startXRadiusCoefficient * (radius - 50) * cos(45 * PI / 180).toFloat()
+                val y1 = center.y + yRadiusCoefficient * (radius - 50) * sin(45 * PI / 180).toFloat()
+
+                val x2 = xCoefficient * maxWidth
+                val y2 = center.y + yRadiusCoefficient * radius
+
+                val x3 = xCoefficient * maxWidth
+                val y3 = center.y + yRadiusCoefficient * (radius + 30f)
+
+                val x4 = xCoefficient * maxWidth + endXCoefficient * 40f
+                val y4 = center.y + yRadiusCoefficient * (radius + 40f)
+
+                val x5 = xCoefficient * maxWidth + endXCoefficient * 55f
+                val y5 = center.y + yRadiusCoefficient * (radius - 90f)
+
+                moveTo(
+                    x = x1,
+                    y = y1,
+                )
+
+                quadraticBezierTo(
+                    x1 = x2,
+                    y1 = y2,
+                    x2 = x3,
+                    y2 = y3,
+                )
+
+                lineTo(
+                    x = x4,
+                    y = y4,
+                )
+
+                lineTo(
+                    x = x5,
+                    y = y5,
+                )
+            },
+            color = Color.Black,
+        )
+    }
 }
 
 @Preview(showBackground = true)
