@@ -29,6 +29,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.delay
 import me.rail.drawing_clock.ui.theme.DrawingClockTheme
@@ -120,7 +121,7 @@ fun ClockCircle(
             drawScope = this,
             center = center,
             step = 30,
-            length = 64.76.dp.toPx(),
+            length = 80.dp.toPx(),
             width = 7.dp.toPx(),
             color = Color.Black,
             currentValue = currentHour,
@@ -130,7 +131,7 @@ fun ClockCircle(
             drawScope = this,
             center = center,
             step = 6,
-            length = 87.62.dp.toPx(),
+            length = 107.dp.toPx(),
             width = 7.dp.toPx(),
             color = Color.Black,
             currentValue = currentMinute,
@@ -155,7 +156,7 @@ fun ClockCircle(
             drawScope = this,
             center = center,
             step = 6,
-            length = 91.43.dp.toPx(),
+            length = 107.dp.toPx(),
             width = 3.dp.toPx(),
             color = Color.Red,
             currentValue = currentSecond,
@@ -221,11 +222,15 @@ fun drawHourNumbers(
 ) = with(drawScope) {
     for (i in 30..360 step 30) {
         val angle = (i - 90f) * (PI / 180)
-        val endX = center.x + (radius - 34.29.dp.toPx()) * cos(angle)
-        val endY = center.y + (radius - 34.29.dp.toPx()) * sin(angle)
+        val endX = center.x + (radius - 38.dp.toPx()) * cos(angle)
+        val endY = center.y + (radius - 38.dp.toPx()) * sin(angle)
         val number = (i / 30).toString()
         val textSize = textMeasurer.measure(
             text = AnnotatedString(number),
+            style = TextStyle(
+                color = Color.Black,
+                fontSize = 24.sp,
+            ),
         ).size.toSize()
         drawText(
             textMeasurer = textMeasurer,
@@ -233,6 +238,7 @@ fun drawHourNumbers(
             size = textSize,
             style = TextStyle(
                 color = Color.Black,
+                fontSize = 24.sp,
             ),
             topLeft = Offset(
                 x = endX.toFloat() - textSize.width / 2,
