@@ -105,20 +105,17 @@ fun ClockCircle(
         )
 
         drawMinuteLines(
-            drawScope = this,
             center = center,
             radius = innerRadius,
         )
 
         drawHourNumbers(
-            drawScope = this,
             center = center,
             radius = innerRadius,
             textMeasurer = textMeasurer,
         )
 
         drawHand(
-            drawScope = this,
             center = center,
             step = 30,
             length = 80.dp.toPx(),
@@ -128,7 +125,6 @@ fun ClockCircle(
         )
 
         drawHand(
-            drawScope = this,
             center = center,
             step = 6,
             length = 107.dp.toPx(),
@@ -153,7 +149,6 @@ fun ClockCircle(
         )
 
         drawHand(
-            drawScope = this,
             center = center,
             step = 6,
             length = 107.dp.toPx(),
@@ -163,7 +158,6 @@ fun ClockCircle(
         )
 
         drawStrapMounts(
-            drawScope = this,
             maxWidth = boxWithConstrainsScope.maxWidth.toPx(),
             center = center,
             radius = outerRadius,
@@ -184,11 +178,10 @@ fun ClockCircle(
     }
 }
 
-fun drawMinuteLines(
-    drawScope: DrawScope,
+fun DrawScope.drawMinuteLines(
     center: Offset,
     radius: Float,
-) = with(drawScope) {
+) {
     var lineHeight: Float
     var strokeWidth: Float
     for (i in 0..360 step 6) {
@@ -214,12 +207,11 @@ fun drawMinuteLines(
 }
 
 @OptIn(ExperimentalTextApi::class)
-fun drawHourNumbers(
-    drawScope: DrawScope,
+fun DrawScope.drawHourNumbers(
     center: Offset,
     radius: Float,
     textMeasurer: TextMeasurer,
-) = with(drawScope) {
+) {
     for (i in 30..360 step 30) {
         val angle = (i - 90f) * (PI / 180)
         val endX = center.x + (radius - 38.dp.toPx()) * cos(angle)
@@ -248,15 +240,14 @@ fun drawHourNumbers(
     }
 }
 
-fun drawHand(
-    drawScope: DrawScope,
+fun DrawScope.drawHand(
     center: Offset,
     step: Int,
     length: Float,
     width: Float,
     color: Color,
     currentValue: Float,
-) = with(drawScope) {
+) {
     val angle= (((currentValue * step) - 90f) * (PI / 180))
     val startX = center.x
     val startY = center.y
@@ -270,12 +261,11 @@ fun drawHand(
     )
 }
 
-fun drawStrapMounts(
-    drawScope: DrawScope,
+fun DrawScope.drawStrapMounts(
     maxWidth: Float,
     center: Offset,
     radius: Float,
-) = with(drawScope) {
+) {
     for (i in 1..4) {
         val startXRadiusCoefficient = (-1f).pow(i)
         val yRadiusCoefficient = if (i > 2) {
