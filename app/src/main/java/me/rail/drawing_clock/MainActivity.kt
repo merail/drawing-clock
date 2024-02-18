@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.delay
 import me.rail.drawing_clock.ui.theme.DrawingClockTheme
 import java.util.Calendar
-import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.sin
@@ -192,7 +191,7 @@ fun DrawScope.drawMinuteLines(
             lineHeight = 15.24.dp.toPx()
             strokeWidth = Stroke.HairlineWidth
         }
-        val angle = i.toFloat() * (PI / 180)
+        val angle = Math.toRadians(i.toDouble())
         val startX = center.x + radius * cos(angle)
         val startY = center.y + radius * sin(angle)
         val endX = center.x + (radius - lineHeight) * cos(angle)
@@ -213,7 +212,7 @@ fun DrawScope.drawHourNumbers(
     textMeasurer: TextMeasurer,
 ) {
     for (i in 30..360 step 30) {
-        val angle = (i - 90f) * (PI / 180)
+        val angle = Math.toRadians((i - 90f).toDouble())
         val endX = center.x + (radius - 38.dp.toPx()) * cos(angle)
         val endY = center.y + (radius - 38.dp.toPx()) * sin(angle)
         val number = (i / 30).toString()
@@ -248,7 +247,7 @@ fun DrawScope.drawHand(
     color: Color,
     currentValue: Float,
 ) {
-    val angle= (((currentValue * step) - 90f) * (PI / 180))
+    val angle= Math.toRadians(((currentValue * step) - 90f).toDouble())
     val startX = center.x
     val startY = center.y
     val endX = center.x + length * cos(angle).toFloat()
@@ -282,8 +281,8 @@ fun DrawScope.drawStrapMounts(
 
         drawPath(
             path = Path().apply {
-                val x1 = center.x + startXRadiusCoefficient * (radius - 19.05.dp.toPx()) * cos(45 * PI / 180).toFloat()
-                val y1 = center.y + yRadiusCoefficient * (radius - 19.05.dp.toPx()) * sin(45 * PI / 180).toFloat()
+                val x1 = center.x + startXRadiusCoefficient * (radius - 19.05.dp.toPx()) * cos(Math.toRadians(45.0)).toFloat()
+                val y1 = center.y + yRadiusCoefficient * (radius - 19.05.dp.toPx()) * sin(Math.toRadians(45.0)).toFloat()
 
                 val x2 = xCoefficient * maxWidth
                 val y2 = center.y + yRadiusCoefficient * radius
