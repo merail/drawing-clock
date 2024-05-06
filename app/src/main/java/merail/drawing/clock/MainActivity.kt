@@ -1,4 +1,4 @@
-package me.rail.drawing_clock
+package merail.drawing.clock
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,7 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -32,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.delay
-import me.rail.drawing_clock.ui.theme.DrawingClockTheme
+import merail.drawing.clock.ui.theme.DrawingClockTheme
 import java.util.Calendar
 import kotlin.math.cos
 import kotlin.math.pow
@@ -49,6 +48,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
 fun Main() {
     BoxWithConstraints(
@@ -71,7 +71,6 @@ fun Main() {
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ClockCircle(
     boxWithConstrainsScope: BoxWithConstraintsScope,
@@ -79,9 +78,9 @@ fun ClockCircle(
     minute: Float,
     second: Float,
 ) {
-    var currentHour by remember { mutableStateOf(hour) }
-    var currentMinute by remember { mutableStateOf(minute) }
-    var currentSecond by remember { mutableStateOf(second) }
+    var currentHour by remember { mutableFloatStateOf(hour) }
+    var currentMinute by remember { mutableFloatStateOf(minute) }
+    var currentSecond by remember { mutableFloatStateOf(second) }
 
     val textMeasurer = rememberTextMeasurer()
     Canvas(
@@ -205,7 +204,6 @@ fun DrawScope.drawMinuteLines(
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 fun DrawScope.drawHourNumbers(
     center: Offset,
     radius: Float,
@@ -320,13 +318,5 @@ fun DrawScope.drawStrapMounts(
             },
             color = Color.Black,
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainPreview() {
-    DrawingClockTheme {
-        Main()
     }
 }

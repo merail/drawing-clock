@@ -1,4 +1,4 @@
-package me.rail.drawing_clock.ui.theme
+package merail.drawing.clock.ui.theme
 
 import android.app.Activity
 import android.os.Build
